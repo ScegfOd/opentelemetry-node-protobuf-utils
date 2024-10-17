@@ -7,13 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "opentelemetry",
     "http",
     "log",
     "logs",
     "metric",
     "metrics",
     "node",
+    "opentelemetry",
     "otlp",
     "proto",
     "protobuf",
