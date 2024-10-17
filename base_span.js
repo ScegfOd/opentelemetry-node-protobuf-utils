@@ -10,8 +10,6 @@ module.exports = ( // same return as f(span) given as the third argument
     , span=>{
       try {
         const result = f(span);
-        if(span.status.code == api.SpanStatusCode.UNSET)
-          span.setStatus({code: api.SpanStatusCode.OK});
         return result;
       } catch (err) {
         span.setStatus({
