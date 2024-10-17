@@ -12,10 +12,12 @@ module.exports = ( // same return as f(span) given as the third argument
         const result = f(span);
         return result;
       } catch (err) {
+        span.recordException(err);
         span.setStatus({
           code: api.SpanStatusCode.ERROR,
           message: err.message,
         });
+        throw err; // don't (mostly) silently eat errors
       } finally {
         span.end();
       }
