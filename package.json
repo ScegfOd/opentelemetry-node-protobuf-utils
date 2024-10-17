@@ -1,5 +1,5 @@
 {
-  "name": "opentelemetryutils",
+  "name": "@scegfod/opentelemetry-utils-node-http-proto",
   "version": "0.0.1",
   "description": "Set of utilities to ease use of opentelemetry with node.js and http/protobuf",
   "main": "instrumentation.js",
@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["opentelemetry"
+    , "http"
     , "log"
     , "logs"
+    , "metric"
     , "metrics"
     , "node"
     , "otlp"
@@ -16,10 +18,15 @@
     , "protobuf"
     , "telemetry"
     , "trace"
+    , "traces"
     , "util"
     , "utility"
+    , "utilities"
   ],
-  "author": "Jonathan Combs, GotM",
+  "author": {
+    "name": "Jonathan Combs, GotM",
+    "email": "JOfCombs@gmail.com"
+  },
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/n/a/issues"
