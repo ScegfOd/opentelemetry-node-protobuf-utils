@@ -24,7 +24,12 @@ module.exports = (
   instrumentation_base_url = "http://localhost:4318",
   tracer_route  = "/v1/traces",
   metrics_route = "/v1/metrics",
+  auto_instrument = false,
 ) => {
+  const instrumentations = {};
+  if (auto_instrument){
+    instrumentations.instrumentations = [getNodeAutoInstrumentations()]
+  }
   new opentelemetry.NodeSDK({
     resource: new Resource({
       [ATTR_SERVICE_NAME]:    app_name,   // service.name
@@ -43,6 +48,6 @@ module.exports = (
         concurrencyLimit: 1, // an optional limit on pending requests
       }),
     }),
-    instrumentations: [getNodeAutoInstrumentations()],
+    ...instrumentations,
   }).start(); // actually start opentelemetry for node
 }
