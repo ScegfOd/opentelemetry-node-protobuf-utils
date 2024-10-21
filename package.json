@@ -1,6 +1,6 @@
 {
   "name": "@scegfod/opentelemetry-utils-node-http-proto",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Set of utilities to ease use of opentelemetry with node.js and http/protobuf",
   "main": "instrumentation.js",
   "scripts": {
