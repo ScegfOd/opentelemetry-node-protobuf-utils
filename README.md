@@ -14,9 +14,6 @@ endpoint:
 require('@scegfod/opentelemetry-utils-node-http-proto')(
   app_name = "test-app",// service.name
   app_version = "0.1.0",// service.version (Resource Data)
-  instrumentation_base_url = "http://localhost:4318",
-  tracer_route  = "/v1/traces",
-  metrics_route = "/v1/metrics",
 );
 ```
 
@@ -48,6 +45,10 @@ Once you're sure you have tools setup to run the tests locally, you can make a
 silly example app, perhaps in express:
 
 # Example express app that demonstrates some tracing:
+It needs the endpoint set in bash, e.g.:
+```BASH
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+```
 
 ## app.js
 ```JavaScript
@@ -55,9 +56,6 @@ silly example app, perhaps in express:
 require('@scegfod/opentelemetry-utils-node-http-proto')(
   app_name = "test-app",// service.name
   app_version = "0.1.0",// service.version (Resource Data)
-  instrumentation_base_url = "http://localhost:4318",
-  tracer_route  = "/v1/traces",
-  metrics_route = "/v1/metrics",
 );
 // if express is before the utils import, the express things won't show up
 //  e.g. middleware - query, middleware - expressInit, & request handler
@@ -68,7 +66,7 @@ const api = require('@opentelemetry/api');
 const tracer = api.trace.getTracer("/app.js", "0.0.1");
 
 const baseSpan = require(
-  '@scegfod/opentelemetry-utils-node-http-proto/base_span.js'
+  './base_span.js'
 );
 
 const PORT = parseInt(process.env.PORT || '8080');
@@ -110,7 +108,7 @@ const tracer = api.trace.getTracer("/dice.js", "0.0.1");
 const meter = api.metrics.getMeter('/dice.js', '0.0.1');
 
 const baseSpan = require(
-  '@scegfod/opentelemetry-utils-node-http-proto/base_span.js'
+  './base_span.js'
 );
 
 const roll_counter = meter.createCounter('dice-lib.rolls.counter');
@@ -144,4 +142,34 @@ function rollTheDice(rolls, min, max) {
 }
 
 module.exports = { rollTheDice };
+```
+
+## base_span.js
+```JavaScript
+const api = require('@opentelemetry/api');
+
+module.exports = ( // same return as f(span) given as the third argument
+  tracer,   // tracer: api.tracer (api from @opentelemetry/api)
+  span_name,// span_name: string (unique name for this span)
+  f,        // f is a function that takes span as its only argument
+) => {
+  return tracer.startActiveSpan(span_name
+    , {kind: 1} // this is running on a server
+    , span=>{
+      try {
+        const result = f(span);
+        return result;
+      } catch (err) {
+        span.recordException(err);
+        span.setStatus({
+          code: api.SpanStatusCode.ERROR,
+          message: err.message,
+        });
+        throw err; // don't (mostly) silently eat errors
+      } finally {
+        span.end();
+      }
+    }
+  );
+};
 ```
