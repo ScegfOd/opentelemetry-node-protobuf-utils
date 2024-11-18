@@ -21,9 +21,6 @@ const {
 module.exports = (
   app_name = "test-app",// service.name
   app_version = "0.1.0",// service.version (Resource Data)
-  instrumentation_base_url = "http://localhost:4318",
-  tracer_route  = "/v1/traces",
-  metrics_route = "/v1/metrics",
   auto_instrument = false,
 ) => {
   const instrumentations = {};
@@ -35,18 +32,9 @@ module.exports = (
       [ATTR_SERVICE_NAME]:    app_name,   // service.name
       [ATTR_SERVICE_VERSION]: app_version,// service.version (Resource Data)
     }),
-    traceExporter: new OTLPTraceExporter({
-      url: `${instrumentation_base_url}${tracer_route}`,
-      // optional - collection of custom headers to be sent with each request
-      // , empty by default
-      headers: {},
-    }),
+    traceExporter: new OTLPTraceExporter(),
     metricReader: new PeriodicExportingMetricReader({
-      exporter: new OTLPMetricExporter({
-        url: `${instrumentation_base_url}${metrics_route}`,
-        headers: {}, // as headers above
-        concurrencyLimit: 1, // an optional limit on pending requests
-      }),
+      exporter: new OTLPMetricExporter(),
     }),
     ...instrumentations,
   }).start(); // actually start opentelemetry for node
